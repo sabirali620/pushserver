@@ -3,39 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Push Notifications</title>
-  <link rel="manifest" href="/manifest.json">
+  <title>Push Notifications</title>
 </head>
 <body>
-  <h1>Web Push Notifications</h1>
-  <p>Click the button below to enable notifications:</p>
+  <h1>Enable Push Notifications</h1>
   <button id="enable-notifications">Enable Notifications</button>
 
   <script>
-    const publicVapidKey = "<YOUR_PUBLIC_VAPID_KEY>"; // Replace with your VAPID public key
+    const publicVapidKey = '<YOUR_PUBLIC_VAPID_KEY>'; // Replace with your public VAPID key
 
-    // Register the service worker and subscribe to push notifications
     document.getElementById('enable-notifications').addEventListener('click', async () => {
-      if ('serviceWorker' in navigator && 'PushManager' in window) {
+      if ('serviceWorker' in navigator) {
         try {
-          console.log('Registering service worker...');
-          const reg = await navigator.serviceWorker.register('/service-worker.js');
-          console.log('Service Worker registered:', reg);
+          const registration = await navigator.serviceWorker.register('/service-worker.js');
+          console.log('Service Worker registered:', registration);
 
-          const subscription = await reg.pushManager.subscribe({
+          const subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
           });
+
           console.log('Push subscription:', subscription);
 
-          // Send the subscription to your backend server
-          alert('Notifications enabled!');
+          // Send subscription to your backend server
+          await fetch('/subscribe', {
+            method: 'POST',
+            body: JSON.stringify(subscription),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
 
+          alert('Push notifications enabled!');
         } catch (error) {
-          console.error('Error during service worker registration:', error);
+          console.error('Error enabling notifications:', error);
         }
-      } else {
-        alert('Push messaging is not supported in this browser.');
       }
     });
 
