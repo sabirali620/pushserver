@@ -11,40 +11,53 @@
 
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-                .then((registration) => {
-                    alert('Service Worker registered:');
-                })
-                .catch((error) => {
-                    alert('Service Worker registration failed:');
-                });
-        } else {
-            alert('Service Worker not supported.');
-        }
-
-        document.getElementById('testNotification').addEventListener('click', async () => {
-            // Request notification permission if not already granted
-            if (Notification.permission !== 'granted') {
-                const permission = await Notification.requestPermission();
-                if (permission !== 'granted') {
-                    alert('Notification permission denied.');
-                    return;
-                }
-            }
-
-            // Send notification via the service worker
-            navigator.serviceWorker.ready
-                .then((registration) => {
-                    alert('Service Worker ready. Sending notification...');
-                    registration.showNotification('Test Notification', {
-                        body: 'This is a test notification!',
-                        icon: 'https://via.placeholder.com/128', // Replace with your icon URL
-                    });
-                })
-                .catch((error) => {
-                    alert('Failed to send notification:');
-                });
+    console.log('Service Worker support detected.');
+    navigator.serviceWorker.register('service-worker.js')
+        .then((registration) => {
+            alert('Service Worker registered:');
+        })
+        .catch((error) => {
+            alert('Service Worker registration failed:');
         });
+} else {
+    alert('Service Worker not supported.');
+}
+
+document.getElementById('testNotification').addEventListener('click', async () => {
+    console.log('Notification button clicked.');
+    
+    if (!('Notification' in window)) {
+        alert('Notifications not supported in this browser.');
+        return;
+    }
+
+    // Request notification permission
+    if (Notification.permission !== 'granted') {
+        console.log('Requesting notification permission...');
+        const permission = await Notification.requestPermission();
+        console.log('Notification permission:', permission);
+        if (permission !== 'granted') {
+            alert('Notification permission denied.');
+            return;
+        }
+    }
+
+    // Send notification via the service worker
+    console.log('Checking Service Worker readiness...');
+    navigator.serviceWorker.ready
+        .then((registration) => {
+            alert('Service Worker ready. Sending notification...');
+            registration.showNotification('Test Notification', {
+                body: 'This is a test notification!',
+                icon: 'https://via.placeholder.com/128',
+            });
+        })
+        .catch((error) => {
+            console.error('Failed to send notification:', error);
+            alert('Failed to send notification.');
+        });
+});
+
     </script>
 </body>
 </html>
