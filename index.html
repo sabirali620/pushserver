@@ -5,72 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Notifications</title>
     <link rel="manifest" href="manifest.json">
-
 </head>
 <body>
-    <h1>Test Notifications manifest linked</h1>
+    <h1>Test Notifications</h1>
     <button id="testNotification">Send Test Notification</button>
 
     <script>
-       if ('Notification' in window && 'serviceWorker' in navigator) {
-    alert('Notifications and Service Workers are supported.');
-    
-    Notification.requestPermission()
-        .then((permission) => {
-            if (permission === 'granted') {
-                alert('Notification permission granted.');
-            } else {
-                alert('Notification permission denied.');
-            }
-        })
-        .catch((error) => {
-            alert('Error requesting notification permission: ' + error);
-        });
-} else {
-    alert('Notifications not supported in this browser.');
-}
+        if ('serviceWorker' in navigator && 'Notification' in window) {
+            alert('Notifications and Service Workers are supported.');
 
-        if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js')
-        .then((registration) => {
-            alert('Service Worker registered successfully.');
-        })
-        .catch((error) => {
-            alert('Service Worker registration failed: ' + error);
-        });
-} else {
-    alert('Service Workers not supported.');
-}
+            Notification.requestPermission()
+                .then((permission) => {
+                    if (permission === 'granted') {
+                        alert('Notification permission granted.');
+                    } else {
+                        alert('Notification permission denied.');
+                    }
+                })
+                .catch((error) => {
+                    alert('Error requesting notification permission:');
+                });
 
+            navigator.serviceWorker.register('service-worker.js')
+                .then((registration) => {
+                    alert('Service Worker registered');
+                })
+                .catch((error) => {
+                    alert('Service Worker registration failed:');
+                });
 
-document.getElementById('testNotification').addEventListener('click', async () => {
-    if (!('Notification' in window)) {
-        alert('Notifications not supported in this browser.');
-        return;
-    }
-
-    if (Notification.permission !== 'granted') {
-        alert('Requesting notification permission...');
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-            alert('Notification permission denied.');
-            return;
-        }
-    }
-
-    navigator.serviceWorker.ready
-        .then((registration) => {
-            alert('Service Worker ready. Sending notification...');
-            registration.showNotification('Test Notification', {
-                body: 'This is a test notification!',
-                icon: 'https://via.placeholder.com/128',
+            document.getElementById('testNotification').addEventListener('click', async () => {
+                if (Notification.permission === 'granted') {
+                    const registration = await navigator.serviceWorker.ready;
+                    const payload = {
+                        title: 'Test Notification',
+                        body: 'This is a test notification from Firebase!',
+                    };
+                    registration.showNotification(payload.title, payload);
+                } else {
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted') {
+                        const registration = await navigator.serviceWorker.ready;
+                        const payload = {
+                            title: 'Test Notification',
+                            body: 'This is a test notification from Firebase!',
+                        };
+                        registration.showNotification(payload.title, payload);
+                    } else {
+                        alert('Notification permission denied.');
+                    }
+                }
             });
-        })
-        .catch((error) => {
-            alert('Failed to send notification: ' + error);
-        });
-});
-
+        } else {
+            alert('Service Workers or Notifications not supported.');
+        }
     </script>
 </body>
 </html>
