@@ -4,9 +4,15 @@ const bodyParser = require('body-parser');
 
 const app = express();
 app.use(bodyParser.json());
+const webPush = require('web-push');
 
-const publicVapidKey = '<YOUR_PUBLIC_VAPID_KEY>';
-const privateVapidKey = '<YOUR_PRIVATE_VAPID_KEY>';
+const vapidKeys = webPush.generateVAPIDKeys();
+
+console.log('Public Key:', vapidKeys.publicKey);
+console.log('Private Key:', vapidKeys.privateKey);
+
+const publicVapidKey = vapidKeys.publicKey;
+const privateVapidKey = vapidKeys.privateKey;
 
 webPush.setVapidDetails('mailto:your-email@example.com', publicVapidKey, privateVapidKey);
 
