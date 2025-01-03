@@ -3,48 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Notification</title>
+    <title>Test Notifications</title>
 </head>
 <body>
-    <h1>Send Notification</h1>
-    <form id="notificationForm">
-        <label for="title">Title:</label>
-        <input type="text" id="title" required>
-        <br><br>
-        <label for="message">Message:</label>
-        <textarea id="message" required></textarea>
-        <br><br>
-        <button type="submit">Send Notification</button>
-    </form>
+    <h1>Test Notifications</h1>
+    <button id="testNotification">Send Test Notification</button>
 
     <script>
-        // Check if service worker and notifications are supported
-       
-            navigator.serviceWorker.register('service-worker.js').then(registration => {
-                alert('Service Worker registered:');
-            }).catch(error => {
-                alert('Service Worker registration failed:');
-            });
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then((registration) => {
+                    console.log('Service Worker registered:', registration);
+                })
+                .catch((error) => {
+                    console.error('Service Worker registration failed:', error);
+                });
+        } else {
+            console.error('Service Worker not supported.');
+        }
 
-            document.getElementById('notificationForm').addEventListener('submit', async (event) => {
-                event.preventDefault();
-                
-                const title = document.getElementById('title').value;
-                const message = document.getElementById('message').value;
-
-                // Request notification permission
-                const permission = await Notification.requestPermission();
-                if (permission !== 'granted') {
-                    alert('Notification permission denied.');
-                    return;
-                }
-
-                // Trigger a notification
-                if (navigator.serviceWorker.controller) {
-                    navigator.serviceWorker.controller.postMessage({ title, message });
-                }
-            });
-       
+        document.getElementById('testNotification').addEventListener('click', () => {
+            if (Notification.permission === 'granted') {
+                navigator.serviceWorker.ready.then((registration) => {
+                    registration.showNotification('Test Notification', {
+                        body: 'This is a test notification!',
+                        icon: 'https://via.placeholder.com/128',
+                    });
+                });
+            } else {
+                console.error('Notification permission not granted.');
+            }
+        });
     </script>
 </body>
 </html>
