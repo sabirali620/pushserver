@@ -1,52 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Push Notifications</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Push Notification Demo</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			text-align: center;
+			margin: 50px;
+		}
+		.notification-container {
+			max-width: 400px;
+			margin: auto;
+		}
+		input, button {
+			display: block;
+			margin: 10px auto;
+			padding: 10px;
+			font-size: 16px;
+			width: 90%;
+		}
+	</style>
 </head>
 <body>
-  <h1>Enable Push Notifications</h1>
-  <button id="enable-notifications">Enable Notifications</button>
+<div class="notification-container">
+	<h1>Send a Push Notification</h1>
+	<input type="text" id="title" placeholder="Notification Title">
+	<input type="text" id="message" placeholder="Notification Message">
+	<input type="file" id="icon" accept="image/*">
+	<button id="sendNotification">Send Notification</button>
+</div>
 
-  <script>
-    const publicVapidKey = 'BI1Ma2tSy2f7KimcR0Mo0MMeffFZ8Fj_luVU2qXioFpNChkaXv2wbuSIz8GDFOtcxQVwtHjBP4d8i_hZVCAeTuY'; // Replace with your public VAPID key
+<script>
+	document.getElementById('sendNotification').addEventListener('click', async () => {
+		const title = document.getElementById('title').value || "Default Title";
+		const message = document.getElementById('message').value || "Default Message";
+		const iconInput = document.getElementById('icon');
+		let iconUrl = null;
 
-    document.getElementById('enable-notifications').addEventListener('click', async () => {
-      if ('serviceWorker' in navigator) {
-        try {
-          const registration = await navigator.serviceWorker.register('/service-worker.js');
-          console.log('Service Worker registered:', registration);
+		
+		// Request permission
+		if (Notification.permission !== "granted") {
+			await Notification.requestPermission();
+		}
 
-          const subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
-          });
+		if (Notification.permission === "granted") {
+			if (iconInput.files && iconInput.files[0]) {
+				// Create a local object URL for the uploaded image
+				iconUrl = URL.createObjectURL(iconInput.files[0]);
+			}
 
-          console.log('Push subscription:', subscription);
+			// Display the notification
+			const notification = new Notification(title, {
+				body: message,
+				icon: iconUrl || "https://via.placeholder.com/100", // Default icon
+			});
 
-          // Send subscription to your backend server
-          await fetch('/subscribe', {
-            method: 'POST',
-            body: JSON.stringify(subscription),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-
-          alert('Push notifications enabled!');
-        } catch (error) {
-          console.error('Error enabling notifications:', error);
-        }
-      }
-    });
-
-    function urlBase64ToUint8Array(base64String) {
-      const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-      const rawData = window.atob(base64);
-      return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
-    }
-  </script>
+			// Handle click event
+			notification.onclick = () => {
+				alert("Notification clicked!");
+			};
+		} else {
+			alert("Permission denied to send notifications.");
+		}
+	});
+</script>
 </body>
 </html>
