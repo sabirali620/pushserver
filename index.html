@@ -3,45 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Notification</title>
+    <title>Get Device Token</title>
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-messaging.js"></script>
 </head>
 <body>
-    <h1>Send Notification to Your iOS Device</h1>
-    <form id="notificationForm">
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" required>
-        <br><br>
-        <label for="message">Message:</label>
-        <textarea id="message" name="message" required></textarea>
-        <br><br>
-        <button type="submit">Send Notification</button>
-    </form>
+    <h1>Get Device Token</h1>
+    <button id="getTokenButton">Get Device Token</button>
+    <p id="tokenOutput"></p>
 
     <script>
-        const form = document.getElementById('notificationForm');
+        // Firebase configuration object (replace with your Firebase project details)
+       const firebaseConfig = {
+  apiKey: "AIzaSyCeWExfD64PI3RtkyMYneSsJE0_q8r2F-g",
+  authDomain: "sampleios-6b676.firebaseapp.com",
+  projectId: "sampleios-6b676",
+  storageBucket: "sampleios-6b676.firebasestorage.app",
+  messagingSenderId: "183336198531",
+  appId: "1:183336198531:web:5822732f5446f1af6e16b6",
+  measurementId: "G-1CNPH8PP64"
+};
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const title = document.getElementById('title').value;
-            const message = document.getElementById('message').value;
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
 
+        // Initialize Firebase Messaging
+        const messaging = firebase.messaging();
+
+        // Function to get the device token
+        async function getDeviceToken() {
             try {
-                const response = await fetch('/send-notification', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, message })
+                // Request permission to show notifications
+                const permission = await Notification.requestPermission();
+                if (permission !== "granted") {
+                    throw new Error("Notification permission not granted.");
+                }
+
+                // Get the device token
+                const token = await messaging.getToken({
+                    vapidKey: "BI1Ma2tSy2f7KimcR0Mo0MMeffFZ8Fj_luVU2qXioFpNChkaXv2wbuSIz8GDFOtcxQVwtHjBP4d8i_hZVCAeTuY", // Replace with your VAPID key from Firebase Console > Cloud Messaging
                 });
 
-                if (response.ok) {
-                    alert('Notification sent!');
+                if (token) {
+                    console.log("Device Token:", token);
+                    document.getElementById("tokenOutput").innerText = `Device Token: ${token}`;
                 } else {
-                    alert('Failed to send notification.');
+                    console.log("No registration token available. Request permission to generate one.");
                 }
             } catch (error) {
-                console.error(error);
-                alert('An error occurred.');
+                console.error("Error getting device token:", error);
+                document.getElementById("tokenOutput").innerText = `Error: ${error.message}`;
             }
-        });
+        }
+
+        // Event listener for button click
+        document.getElementById("getTokenButton").addEventListener("click", getDeviceToken);
     </script>
 </body>
 </html>
