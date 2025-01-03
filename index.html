@@ -11,8 +11,8 @@
     <button id="testNotification">Send Test Notification</button>
 
     <script>
-        if ('serviceWorker' in navigator && 'Notification' in window) {
-            alert('Notifications and Service Workers are supported.');
+      
+         
 
             Notification.requestPermission()
                 .then((permission) => {
@@ -56,9 +56,7 @@
                     }
                 }
             });
-        } else {
-            alert('Service Workers or Notifications not supported.');
-        }
+      
     </script>
 </body>
 </html>
