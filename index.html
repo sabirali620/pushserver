@@ -22,17 +22,28 @@
             alert('Service Worker not supported.');
         }
 
-        document.getElementById('testNotification').addEventListener('click', () => {
-            if (Notification.permission === 'granted') {
-                navigator.serviceWorker.ready.then((registration) => {
+        document.getElementById('testNotification').addEventListener('click', async () => {
+            // Request notification permission if not already granted
+            if (Notification.permission !== 'granted') {
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    alert('Notification permission denied.');
+                    return;
+                }
+            }
+
+            // Send notification via the service worker
+            navigator.serviceWorker.ready
+                .then((registration) => {
+                    console.log('Service Worker ready. Sending notification...');
                     registration.showNotification('Test Notification', {
                         body: 'This is a test notification!',
-                        icon: 'https://via.placeholder.com/128',
+                        icon: 'https://via.placeholder.com/128', // Replace with your icon URL
                     });
+                })
+                .catch((error) => {
+                    alert('Failed to send notification:');
                 });
-            } else {
-                alert('Notification permission not granted.');
-            }
         });
     </script>
 </body>
