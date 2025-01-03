@@ -42,26 +42,20 @@
 
 
 document.getElementById('testNotification').addEventListener('click', async () => {
-    console.log('Notification button clicked.');
-    
     if (!('Notification' in window)) {
         alert('Notifications not supported in this browser.');
         return;
     }
 
-    // Request notification permission
     if (Notification.permission !== 'granted') {
         alert('Requesting notification permission...');
         const permission = await Notification.requestPermission();
-        alert('Notification permission:');
         if (permission !== 'granted') {
             alert('Notification permission denied.');
             return;
         }
     }
 
-    // Send notification via the service worker
-    alert('Checking Service Worker readiness...');
     navigator.serviceWorker.ready
         .then((registration) => {
             alert('Service Worker ready. Sending notification...');
@@ -71,8 +65,7 @@ document.getElementById('testNotification').addEventListener('click', async () =
             });
         })
         .catch((error) => {
-            console.error('Failed to send notification:', error);
-            alert('Failed to send notification.');
+            alert('Failed to send notification: ' + error);
         });
 });
 
