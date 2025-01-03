@@ -8,15 +8,16 @@
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-messaging.js"></script>
   <script>
     // Firebase configuration
+  
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID",
-    };
-
+  apiKey: "AIzaSyCeWExfD64PI3RtkyMYneSsJE0_q8r2F-g",
+  authDomain: "sampleios-6b676.firebaseapp.com",
+  projectId: "sampleios-6b676",
+  storageBucket: "sampleios-6b676.firebasestorage.app",
+  messagingSenderId: "183336198531",
+  appId: "1:183336198531:web:5822732f5446f1af6e16b6",
+  measurementId: "G-1CNPH8PP64"
+};
     // Initialize Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const messaging = firebase.messaging();
@@ -25,7 +26,7 @@
     async function requestPermission() {
       try {
         const token = await messaging.getToken({
-          vapidKey: "YOUR_PUBLIC_VAPID_KEY",
+          vapidKey: "BI1Ma2tSy2f7KimcR0Mo0MMeffFZ8Fj_luVU2qXioFpNChkaXv2wbuSIz8GDFOtcxQVwtHjBP4d8i_hZVCAeTuY",
         });
         console.log("FCM Token:", token);
         alert("Token received! Check console for details.");
