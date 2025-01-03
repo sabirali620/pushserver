@@ -11,27 +11,27 @@
     <button id="testNotification">Send Test Notification</button>
 
     <script>
-      
-         
+        if ('serviceWorker' in navigator && 'Notification' in window) {
+            console.log('Notifications and Service Workers are supported.');
 
             Notification.requestPermission()
                 .then((permission) => {
                     if (permission === 'granted') {
-                        alert('Notification permission granted.');
+                        console.log('Notification permission granted.');
                     } else {
-                        alert('Notification permission denied.');
+                        console.log('Notification permission denied.');
                     }
                 })
                 .catch((error) => {
-                    alert('Error requesting notification permission:');
+                    console.error('Error requesting notification permission:', error);
                 });
 
             navigator.serviceWorker.register('service-worker.js')
                 .then((registration) => {
-                    alert('Service Worker registered');
+                    console.log('Service Worker registered:', registration);
                 })
                 .catch((error) => {
-                    alert('Service Worker registration failed:');
+                    console.error('Service Worker registration failed:', error);
                 });
 
             document.getElementById('testNotification').addEventListener('click', async () => {
@@ -56,7 +56,9 @@
                     }
                 }
             });
-      
+        } else {
+            console.log('Service Workers or Notifications not supported.');
+        }
     </script>
 </body>
 </html>
