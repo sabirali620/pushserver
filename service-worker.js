@@ -1,17 +1,9 @@
-self.addEventListener('push', (event) => {
-  const data = event.data.json();
-  event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: data.icon,
-      data: data,
-    })
-  );
-});
+self.addEventListener('message', (event) => {
+    const { title, message } = event.data;
 
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  if (event.notification.data && event.notification.data.url) {
-    clients.openWindow(event.notification.data.url);
-  }
+    // Show a notification
+    self.registration.showNotification(title, {
+        body: message,
+        icon: 'https://via.placeholder.com/128', // Replace with your icon URL
+    });
 });
