@@ -1,9 +1,12 @@
-self.addEventListener('message', (event) => {
-    const { title, message } = event.data;
+self.addEventListener('install', (event) => {
+    alert('Service Worker installed.');
+});
 
-    // Show a notification
-    self.registration.showNotification(title, {
-        body: message,
-        icon: 'https://via.placeholder.com/128', // Replace with your icon URL
-    });
+self.addEventListener('activate', (event) => {
+    alert('Service Worker activated.');
+});
+
+self.addEventListener('notificationclick', (event) => {
+    alert('Notification clicked:');
+    event.notification.close();
 });
