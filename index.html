@@ -10,18 +10,24 @@
     <button id="testNotification">Send Test Notification</button>
 
     <script>
-        if ('serviceWorker' in navigator) {
-    console.log('Service Worker support detected.');
-    navigator.serviceWorker.register('service-worker.js')
-        .then((registration) => {
-            alert('Service Worker registered:');
+       if ('Notification' in window && 'serviceWorker' in navigator) {
+    alert('Notifications and Service Workers are supported.');
+    
+    Notification.requestPermission()
+        .then((permission) => {
+            if (permission === 'granted') {
+                alert('Notification permission granted.');
+            } else {
+                alert('Notification permission denied.');
+            }
         })
         .catch((error) => {
-            alert('Service Worker registration failed:');
+            alert('Error requesting notification permission: ' + error);
         });
 } else {
-    alert('Service Worker not supported.');
+    alert('Notifications not supported in this browser.');
 }
+
 
 document.getElementById('testNotification').addEventListener('click', async () => {
     console.log('Notification button clicked.');
