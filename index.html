@@ -12,26 +12,26 @@
 
     <script>
         if ('serviceWorker' in navigator && 'Notification' in window) {
-            console.log('Notifications and Service Workers are supported.');
+            alert('Notifications and Service Workers are supported.');
 
             Notification.requestPermission()
                 .then((permission) => {
                     if (permission === 'granted') {
-                        console.log('Notification permission granted.');
+                        alert('Notification permission granted.');
                     } else {
-                        console.log('Notification permission denied.');
+                        alert('Notification permission denied.');
                     }
                 })
                 .catch((error) => {
-                    console.error('Error requesting notification permission:', error);
+                    alert('Error requesting notification permission:');
                 });
 
             navigator.serviceWorker.register('service-worker.js')
                 .then((registration) => {
-                    console.log('Service Worker registered:', registration);
+                    alert('Service Worker registered:');
                 })
                 .catch((error) => {
-                    console.error('Service Worker registration failed:', error);
+                    alert('Service Worker registration failed:');
                 });
 
             document.getElementById('testNotification').addEventListener('click', async () => {
@@ -57,7 +57,7 @@
                 }
             });
         } else {
-            console.log('Service Workers or Notifications not supported.');
+            alert('Service Workers or Notifications not supported.');
         }
     </script>
 </body>
