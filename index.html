@@ -3,93 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulated Notifications</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      text-align: center;
-    }
-    .notification {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #007bff;
-      color: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-      display: none;
-      max-width: 300px;
-    }
-    .notification img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      margin-right: 10px;
-      float: left;
-    }
-    .notification .content {
-      overflow: hidden;
-    }
-    button {
-      padding: 10px 20px;
-      margin-top: 20px;
-      font-size: 16px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <h1>Simulated Notifications</h1>
-  <input type="text" id="title" placeholder="Notification Title"><br>
-  <input type="text" id="message" placeholder="Notification Message"><br>
-  <input type="file" id="icon" accept="image/*"><br>
-  <button id="sendNotification">Show Notification</button>
-
-  <div class="notification" id="notification">
-    <img id="notifIcon" src="" alt="Icon">
-    <div class="content">
-      <strong id="notifTitle"></strong>
-      <p id="notifMessage"></p>
-    </div>
-  </div>
-
+  <title>Send Push Notification</title>
+  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-messaging.js"></script>
   <script>
-    document.getElementById('sendNotification').addEventListener('click', () => {
-      const title = document.getElementById('title').value || "Default Title";
-      const message = document.getElementById('message').value || "Default Message";
-      const iconInput = document.getElementById('icon');
-      const notification = document.getElementById('notification');
-      const notifIcon = document.getElementById('notifIcon');
-      const notifTitle = document.getElementById('notifTitle');
-      const notifMessage = document.getElementById('notifMessage');
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID",
+    };
 
-      // Set notification content
-      notifTitle.innerText = title;
-      notifMessage.innerText = message;
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
 
-      if (iconInput.files && iconInput.files[0]) {
-        const iconUrl = URL.createObjectURL(iconInput.files[0]);
-        notifIcon.src = iconUrl;
-        notifIcon.style.display = "block";
-      } else {
-        notifIcon.src = "https://via.placeholder.com/50";
-        notifIcon.style.display = "block";
+    // Request permission for notifications
+    async function requestPermission() {
+      try {
+        const token = await messaging.getToken({
+          vapidKey: "YOUR_PUBLIC_VAPID_KEY",
+        });
+        console.log("FCM Token:", token);
+        alert("Token received! Check console for details.");
+        // Send the token to your backend for sending notifications
+      } catch (err) {
+        console.error("Permission denied", err);
       }
+    }
 
-      // Show notification
-      notification.style.display = "block";
-
-      // Auto-hide after 5 seconds
-      setTimeout(() => {
-        notification.style.display = "none";
-      }, 5000);
+    messaging.onMessage((payload) => {
+      console.log("Message received. ", payload);
+      // Display notification
+      new Notification(payload.notification.title, {
+        body: payload.notification.body,
+        icon: payload.notification.icon,
+      });
     });
   </script>
+</head>
+<body>
+  <h1>Send Push Notification</h1>
+  <button onclick="requestPermission()">Request Permission</button>
 </body>
 </html>
