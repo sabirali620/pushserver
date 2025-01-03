@@ -35,7 +35,7 @@
             // Send notification via the service worker
             navigator.serviceWorker.ready
                 .then((registration) => {
-                    console.log('Service Worker ready. Sending notification...');
+                    alert('Service Worker ready. Sending notification...');
                     registration.showNotification('Test Notification', {
                         body: 'This is a test notification!',
                         icon: 'https://via.placeholder.com/128', // Replace with your icon URL
