@@ -1,70 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Push Notification Demo</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			text-align: center;
-			margin: 50px;
-		}
-		.notification-container {
-			max-width: 400px;
-			margin: auto;
-		}
-		input, button {
-			display: block;
-			margin: 10px auto;
-			padding: 10px;
-			font-size: 16px;
-			width: 90%;
-		}
-	</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Notification</title>
 </head>
 <body>
-<div class="notification-container">
-	<h1>Send a Push Notification</h1>
-	<input type="text" id="title" placeholder="Notification Title">
-	<input type="text" id="message" placeholder="Notification Message">
-	<input type="file" id="icon" accept="image/*">
-	<button id="sendNotification">Send Notification</button>
-</div>
+    <h1>Send Notification to Your iOS Device</h1>
+    <form id="notificationForm">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+        <br><br>
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" required></textarea>
+        <br><br>
+        <button type="submit">Send Notification</button>
+    </form>
 
-<script>
-	document.getElementById('sendNotification').addEventListener('click', async () => {
-		const title = document.getElementById('title').value || "Default Title";
-		const message = document.getElementById('message').value || "Default Message";
-		const iconInput = document.getElementById('icon');
-		let iconUrl = null;
+    <script>
+        const form = document.getElementById('notificationForm');
 
-		
-		// Request permission
-		if (Notification.permission !== "granted") {
-			await Notification.requestPermission();
-		}
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const message = document.getElementById('message').value;
 
-		if (Notification.permission === "granted") {
-			if (iconInput.files && iconInput.files[0]) {
-				// Create a local object URL for the uploaded image
-				iconUrl = URL.createObjectURL(iconInput.files[0]);
-			}
+            try {
+                const response = await fetch('/send-notification', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, message })
+                });
 
-			// Display the notification
-			const notification = new Notification(title, {
-				body: message,
-				icon: iconUrl || "https://via.placeholder.com/100", // Default icon
-			});
-
-			// Handle click event
-			notification.onclick = () => {
-				alert("Notification clicked!");
-			};
-		} else {
-			alert("Permission denied to send notifications.");
-		}
-	});
-</script>
+                if (response.ok) {
+                    alert('Notification sent!');
+                } else {
+                    alert('Failed to send notification.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred.');
+            }
+        });
+    </script>
 </body>
 </html>
