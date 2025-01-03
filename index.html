@@ -28,6 +28,18 @@
     alert('Notifications not supported in this browser.');
 }
 
+        if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+        .then((registration) => {
+            alert('Service Worker registered successfully.');
+        })
+        .catch((error) => {
+            alert('Service Worker registration failed: ' + error);
+        });
+} else {
+    alert('Service Workers not supported.');
+}
+
 
 document.getElementById('testNotification').addEventListener('click', async () => {
     console.log('Notification button clicked.');
