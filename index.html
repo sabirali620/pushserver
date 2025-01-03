@@ -1,75 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Push Notification Demo</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			text-align: center;
-			margin: 50px;
-		}
-		.notification-container {
-			max-width: 400px;
-			margin: auto;
-		}
-		input, button {
-			display: block;
-			margin: 10px auto;
-			padding: 10px;
-			font-size: 16px;
-			width: 90%;
-		}
-	</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulated Notifications</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007bff;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+      display: none;
+      max-width: 300px;
+    }
+    .notification img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+      float: left;
+    }
+    .notification .content {
+      overflow: hidden;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-<div class="notification-container">
-	<h1>Send a Push Notification</h1>
-	<input type="text" id="title" placeholder="Notification Title">
-	<input type="text" id="message" placeholder="Notification Message">
-	<input type="file" id="icon" accept="image/*">
-	<button id="sendNotification">Send Notification</button>
-</div>
+  <h1>Simulated Notifications</h1>
+  <input type="text" id="title" placeholder="Notification Title"><br>
+  <input type="text" id="message" placeholder="Notification Message"><br>
+  <input type="file" id="icon" accept="image/*"><br>
+  <button id="sendNotification">Show Notification</button>
 
-<script>
-	document.getElementById('sendNotification').addEventListener('click', async () => {
-		const title = document.getElementById('title').value || "Default Title";
-		const message = document.getElementById('message').value || "Default Message";
-		const iconInput = document.getElementById('icon');
-		let iconUrl = null;
+  <div class="notification" id="notification">
+    <img id="notifIcon" src="" alt="Icon">
+    <div class="content">
+      <strong id="notifTitle"></strong>
+      <p id="notifMessage"></p>
+    </div>
+  </div>
 
-		// Check for browser support
-		if (!("Notification" in window)) {
-			alert("This browser does not support desktop notifications.");
-			return;
-		}
+  <script>
+    document.getElementById('sendNotification').addEventListener('click', () => {
+      const title = document.getElementById('title').value || "Default Title";
+      const message = document.getElementById('message').value || "Default Message";
+      const iconInput = document.getElementById('icon');
+      const notification = document.getElementById('notification');
+      const notifIcon = document.getElementById('notifIcon');
+      const notifTitle = document.getElementById('notifTitle');
+      const notifMessage = document.getElementById('notifMessage');
 
-		// Request permission
-		if (Notification.permission !== "granted") {
-			await Notification.requestPermission();
-		}
+      // Set notification content
+      notifTitle.innerText = title;
+      notifMessage.innerText = message;
 
-		if (Notification.permission === "granted") {
-			if (iconInput.files && iconInput.files[0]) {
-				// Create a local object URL for the uploaded image
-				iconUrl = URL.createObjectURL(iconInput.files[0]);
-			}
+      if (iconInput.files && iconInput.files[0]) {
+        const iconUrl = URL.createObjectURL(iconInput.files[0]);
+        notifIcon.src = iconUrl;
+        notifIcon.style.display = "block";
+      } else {
+        notifIcon.src = "https://via.placeholder.com/50";
+        notifIcon.style.display = "block";
+      }
 
-			// Display the notification
-			const notification = new Notification(title, {
-				body: message,
-				icon: iconUrl || "https://via.placeholder.com/100", // Default icon
-			});
+      // Show notification
+      notification.style.display = "block";
 
-			// Handle click event
-			notification.onclick = () => {
-				alert("Notification clicked!");
-			};
-		} else {
-			alert("Permission denied to send notifications.");
-		}
-	});
-</script>
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        notification.style.display = "none";
+      }, 5000);
+    });
+  </script>
 </body>
 </html>
