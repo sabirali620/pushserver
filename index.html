@@ -43,7 +43,7 @@ document.getElementById('testNotification').addEventListener('click', async () =
     }
 
     // Send notification via the service worker
-    console.log('Checking Service Worker readiness...');
+    alert('Checking Service Worker readiness...');
     navigator.serviceWorker.ready
         .then((registration) => {
             alert('Service Worker ready. Sending notification...');
