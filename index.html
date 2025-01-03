@@ -33,9 +33,9 @@ document.getElementById('testNotification').addEventListener('click', async () =
 
     // Request notification permission
     if (Notification.permission !== 'granted') {
-        console.log('Requesting notification permission...');
+        alert('Requesting notification permission...');
         const permission = await Notification.requestPermission();
-        console.log('Notification permission:', permission);
+        alert('Notification permission:');
         if (permission !== 'granted') {
             alert('Notification permission denied.');
             return;
