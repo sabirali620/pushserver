@@ -3,7 +3,7 @@
   "name": "Test Notifications App",
   "icons": [
     {
-      "src": "icon-192x192.png",
+      "src": "icon-180.png",
       "type": "image/png",
       "sizes": "192x192"
     }
