@@ -5,8 +5,3 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
     alert('Service Worker activated.');
 });
-
-self.addEventListener('notificationclick', (event) => {
-    alert('Notification clicked:');
-    event.notification.close();
-});
