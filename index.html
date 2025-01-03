@@ -3,61 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Device Token</title>
-    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-messaging.js"></script>
+    <title>Send Notification</title>
 </head>
 <body>
-    <h1>Get Device Token</h1>
-    <button id="getTokenButton">Get Device Token</button>
-    <p id="tokenOutput"></p>
+    <h1>Send Notification</h1>
+    <form id="notificationForm">
+        <label for="title">Title:</label>
+        <input type="text" id="title" required>
+        <br><br>
+        <label for="message">Message:</label>
+        <textarea id="message" required></textarea>
+        <br><br>
+        <button type="submit">Send Notification</button>
+    </form>
 
     <script>
-        // Firebase configuration object (replace with your Firebase project details)
-       const firebaseConfig = {
-  apiKey: "AIzaSyCeWExfD64PI3RtkyMYneSsJE0_q8r2F-g",
-  authDomain: "sampleios-6b676.firebaseapp.com",
-  projectId: "sampleios-6b676",
-  storageBucket: "sampleios-6b676.firebasestorage.app",
-  messagingSenderId: "183336198531",
-  appId: "1:183336198531:web:5822732f5446f1af6e16b6",
-  measurementId: "G-1CNPH8PP64"
-};
+        // Check if service worker and notifications are supported
+        if ('serviceWorker' in navigator && 'Notification' in window) {
+            navigator.serviceWorker.register('service-worker.js').then(registration => {
+                console.log('Service Worker registered:', registration);
+            }).catch(error => {
+                console.error('Service Worker registration failed:', error);
+            });
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
+            document.getElementById('notificationForm').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                
+                const title = document.getElementById('title').value;
+                const message = document.getElementById('message').value;
 
-        // Initialize Firebase Messaging
-        const messaging = firebase.messaging();
-
-        // Function to get the device token
-        async function getDeviceToken() {
-            try {
-                // Request permission to show notifications
+                // Request notification permission
                 const permission = await Notification.requestPermission();
-                if (permission !== "granted") {
-                    throw new Error("Notification permission not granted.");
+                if (permission !== 'granted') {
+                    alert('Notification permission denied.');
+                    return;
                 }
 
-                // Get the device token
-                const token = await messaging.getToken({
-                    vapidKey: "BI1Ma2tSy2f7KimcR0Mo0MMeffFZ8Fj_luVU2qXioFpNChkaXv2wbuSIz8GDFOtcxQVwtHjBP4d8i_hZVCAeTuY", // Replace with your VAPID key from Firebase Console > Cloud Messaging
-                });
-
-                if (token) {
-                    console.log("Device Token:", token);
-                    document.getElementById("tokenOutput").innerText = `Device Token: ${token}`;
-                } else {
-                    console.log("No registration token available. Request permission to generate one.");
+                // Trigger a notification
+                if (navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({ title, message });
                 }
-            } catch (error) {
-                console.error("Error getting device token:", error);
-                document.getElementById("tokenOutput").innerText = `Error: ${error.message}`;
-            }
+            });
+        } else {
+            alert('Your browser does not support notifications or service workers.');
         }
-
-        // Event listener for button click
-        document.getElementById("getTokenButton").addEventListener("click", getDeviceToken);
     </script>
 </body>
 </html>
